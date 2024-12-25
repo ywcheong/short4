@@ -1,0 +1,35 @@
+# Network 명시적 정의
+networks:
+  short4_network:
+    driver: bridge
+
+# 서비스 정의
+services:
+  mongodb:
+    image: 'mongo:latest'
+    environment:
+      MONGO_INITDB_DATABASE: short4
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    ports:
+      - '27017'
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379'
+  springboot-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - mongodb
+    networks:
+      - short4_network
+
+# 인증정보 정의
+secrets:
+  mongodb_username:
+    file: ./secret/mongodb_username.secret
+  mongodb_password:
+    file: ./secret/mongodb_password.secret
