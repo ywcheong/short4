@@ -8,7 +8,6 @@
         <option name="services">
           <list>
             <option value="mongodb"/>
-            <option value="redis"/>
             <option value="springboot-app"/>
           </list>
         </option>

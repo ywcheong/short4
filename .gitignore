@@ -39,3 +39,6 @@ out/
 ### Secret Files ###
 secret/
 *.secret
+
+### Development Phase Docker Volume ###
+volume/*

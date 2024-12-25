@@ -20,20 +20,23 @@ services:
       - short4-network
     expose:
       - '27017'
-  # Redis 컨테이너
-  redis:
-    image: 'redis:latest'
-    networks:
-      - short4-network
-    expose:
-      - '6379'
+  #  # Redis 컨테이너
+  #  redis:
+  #    image: 'redis:latest'
+  #    networks:
+  #      - short4-network
+  #    expose:
+  #      - '6379'
   # Spring Boot(Tomcat) 컨테이너
   springboot-app:
     build:
       context: .
       dockerfile: Dockerfile
+    entrypoint: java -jar /app/server.jar
+    secrets:
+      - mongodb_user_password
     depends_on:
-      - redis
+      #      - redis
       - mongodb
     networks:
       - short4-network
