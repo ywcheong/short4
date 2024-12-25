@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: short4
+
+server:
+  port: 8080
