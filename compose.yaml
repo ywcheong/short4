@@ -9,13 +9,13 @@ services:
     image: 'mongo:latest'
     environment:
       MONGO_INITDB_DATABASE: short4
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
-    ports:
+      MONGO_INITDB_ROOT_USERNAME: short4
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/mongodb_password
+    expose:
       - '27017'
   redis:
     image: 'redis:latest'
-    ports:
+    expose:
       - '6379'
   springboot-app:
     build:
@@ -26,6 +26,8 @@ services:
       - mongodb
     networks:
       - short4_network
+    ports:
+      - '8080:8080'
 
 # 인증정보 정의
 secrets:

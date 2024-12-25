@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk-alpine
 
-ARG JAR_FILE=build/myapp-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=build/docker/app.jar
 
 COPY ${JAR_FILE} app.jar
 
