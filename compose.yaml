@@ -1,22 +1,33 @@
 # Network 명시적 정의
 networks:
-  short4_network:
+  short4-network:
     driver: bridge
 
 # 서비스 정의
 services:
+  # MongoDB 컨테이너
   mongodb:
     image: 'mongo:latest'
-    environment:
-      MONGO_INITDB_DATABASE: short4
-      MONGO_INITDB_ROOT_USERNAME: short4
-      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/mongodb_password
+    command: mongod --auth
+    secrets:
+      - mongodb_root_password
+      - mongodb_user_password
+    volumes:
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - ./volume/mongo/db:/data/db
+      - ./volume/mongo/configdb:/data/configdb
+    networks:
+      - short4-network
     expose:
       - '27017'
+  # Redis 컨테이너
   redis:
     image: 'redis:latest'
+    networks:
+      - short4-network
     expose:
       - '6379'
+  # Spring Boot(Tomcat) 컨테이너
   springboot-app:
     build:
       context: .
@@ -25,13 +36,13 @@ services:
       - redis
       - mongodb
     networks:
-      - short4_network
+      - short4-network
     ports:
       - '8080:8080'
 
 # 인증정보 정의
 secrets:
-  mongodb_username:
-    file: ./secret/mongodb_username.secret
-  mongodb_password:
-    file: ./secret/mongodb_password.secret
+  mongodb_root_password:
+    file: ./secret/mongodb_root_password.secret
+  mongodb_user_password:
+    file: ./secret/mongodb_user_password.secret
