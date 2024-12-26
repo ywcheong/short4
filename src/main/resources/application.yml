@@ -7,3 +7,7 @@ spring:
 
 server:
   port: 8080
+
+short4:
+  stat:
+    expire-after-hours: 168
