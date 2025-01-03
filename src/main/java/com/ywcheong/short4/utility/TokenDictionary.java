@@ -12,40 +12,53 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.*;
 
 @Component
 @Slf4j
-@Getter
-public class RandomTokenGenerator {
-    private final int randomSeed = 1234; // Todo 서버 부팅 시간에 따른 시드 의존성 주입
+public class TokenDictionary {
+    @Getter
+    private Map<String, List<String>> dictionaryOfLanguage;
+
+    @Getter
+    @Value("${short4.token.languages}")
+    private List<String> tokenLanguages;
     private final ResourceLoader resourceLoader;
-    private final Map<String, List<String>> dictionaryOfLanguage = new HashMap<>();
-    @Value("${short4.token-languages}")
-    private String[] tokenLanguages;
 
     @Autowired
-    public RandomTokenGenerator(@Qualifier("webApplicationContext") ResourceLoader resourceLoader) {
+    public TokenDictionary(@Qualifier("webApplicationContext") ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 
     @PostConstruct
-    public void initRandomTokenGenerator() {
-        loadDictionaries();
+    private void initTokenDictionary() {
+        if (!validateTokenLanguageProperty()) {
+            throw new RuntimeException("Property not defined");
+        }
+
+        this.dictionaryOfLanguage = loadDictionaries();
     }
 
-    public void loadDictionaries() {
+    public boolean validateTokenLanguageProperty() {
         // Properties에서 동적으로 로드하는 Token Language 설정이 제대로 들어왔는지 검사
         if (tokenLanguages == null) {
             log.error("Property [short4.token-languages] not defined");
-            throw new RuntimeException("Property not defined");
+            return false;
         }
-        log.info("Property [short4.token-languages] found [{}]", Arrays.toString(tokenLanguages));
 
+        log.info("Property [short4.token-languages] found [{}]", tokenLanguages.toString());
+        return true;
+    }
+
+    public Map<String, List<String>> loadDictionaries() {
+        // Properties에서 동적으로 로드하는 Token Language 설정이 제대로 들어왔는지 검사
+        Map<String, List<String>> result = new HashMap<String, List<String>>();
         for (String language : tokenLanguages) {
             List<String> dictionary = loadDictionaryOfLanguage(language);
-            dictionaryOfLanguage.put(language, dictionary);
+            result.put(language, dictionary);
         }
+        return result;
     }
 
     public List<String> loadDictionaryOfLanguage(String language) {
@@ -85,5 +98,15 @@ public class RandomTokenGenerator {
         }
 
         return dictionaryContent;
+    }
+
+    public Boolean isSupportedLanguage(String language) {
+        return tokenLanguages.contains(language);
+    }
+
+    public String pickRandomToken(String language) {
+        SecureRandom random = new SecureRandom();
+        List<String> dictionary = dictionaryOfLanguage.get(language);
+        return dictionary.get(random.nextInt(dictionary.size()));
     }
 }
