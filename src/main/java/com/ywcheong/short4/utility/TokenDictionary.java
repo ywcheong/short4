@@ -47,13 +47,13 @@ public class TokenDictionary {
             return false;
         }
 
-        log.info("Property [short4.token-languages] found [{}]", tokenLanguages.toString());
+        log.info("Property [short4.token-languages] found [{}]", tokenLanguages);
         return true;
     }
 
     public Map<String, List<String>> loadDictionaries() {
         // Properties에서 동적으로 로드하는 Token Language 설정이 제대로 들어왔는지 검사
-        Map<String, List<String>> result = new HashMap<String, List<String>>();
+        Map<String, List<String>> result = new HashMap<>();
         for (String language : tokenLanguages) {
             List<String> dictionary = loadDictionaryOfLanguage(language);
             result.put(language, dictionary);
