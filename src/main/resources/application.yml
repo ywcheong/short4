@@ -2,7 +2,8 @@ spring:
   application:
     name: short4
   data:
-    mongodb: # [[mongodb_user_password]]는 MongoConfig.java에서 동적 처리
+    mongodb:
+      # [[mongodb_user_password]]는 MongoConfig.java에서 동적 처리
       uri: mongodb://short4_user:[[mongodb_user_password]]@mongodb:27017/short4
 
 server:
@@ -11,3 +12,4 @@ server:
 short4:
   stat:
     expire-after-hours: 168
+  token-languages: ko-KR, en-US
