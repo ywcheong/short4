@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: short4
@@ -6,14 +9,13 @@ spring:
       # [[mongodb_user_password]]는 MongoConfig.java에서 동적 처리
       uri: mongodb://short4_user:[[mongodb_user_password]]@mongodb:27017/short4
 
-server:
-  port: 8080
-
 short4:
   stat:
     expire-after-hours: 168
   token:
-    length: 4
+    word-count: 4
     languages: ko-KR, en-US
   server:
     max-url-generate-attempt: 5
+    allowed-protocols: HTTP, HTTPS
+    manage-secret-length: 32
