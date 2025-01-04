@@ -27,7 +27,6 @@ public class ShortURL {
     private int expireAfterSeconds;
     private int expireAfterVisits;
 
-    private String salt;
     private String accessSecretHash;
     private String manageSecretHash;
 
