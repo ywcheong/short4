@@ -17,7 +17,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class TokenDictionary {
+public class WordDictionary {
     @Getter
     private Map<String, List<String>> dictionaryOfLanguage;
 
@@ -27,7 +27,7 @@ public class TokenDictionary {
     private final ResourceLoader resourceLoader;
 
     @Autowired
-    public TokenDictionary(@Qualifier("webApplicationContext") ResourceLoader resourceLoader) {
+    public WordDictionary(@Qualifier("webApplicationContext") ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
 

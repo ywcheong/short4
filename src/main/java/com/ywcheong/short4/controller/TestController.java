@@ -1,6 +1,6 @@
 package com.ywcheong.short4.controller;
 
-import com.ywcheong.short4.utility.TokenDictionary;
+import com.ywcheong.short4.utility.WordDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +12,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/test")
 public class TestController {
-    final TokenDictionary generator;
+    final WordDictionary generator;
 
     @Autowired
-    public TestController(TokenDictionary generator) {
+    public TestController(WordDictionary generator) {
         this.generator = generator;
     }
 

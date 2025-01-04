@@ -10,26 +10,26 @@ import java.util.StringJoiner;
 
 @Component
 @Slf4j
-public class ShortURLGenerator {
-    private final TokenDictionary tokenDictionary;
+public class TokenGenerator {
+    private final WordDictionary wordDictionary;
 
-    @Value("${short4.token.length}")
-    private int keywordLength;
+    @Value("${short4.token.word-count}")
+    private int wordCount;
 
     @Autowired
-    public ShortURLGenerator(TokenDictionary tokenDictionary) {
-        this.tokenDictionary = tokenDictionary;
+    public TokenGenerator(WordDictionary wordDictionary) {
+        this.wordDictionary = wordDictionary;
     }
 
     public @Nullable String generate(String language) {
-        if (!tokenDictionary.isSupportedLanguage(language)) {
+        if (!wordDictionary.isSupportedLanguage(language)) {
             log.error("Language [{}] not found", language);
             return null;
         }
 
         StringJoiner joiner = new StringJoiner("+");
-        for (int i = 0; i < keywordLength; i++) {
-            joiner.add(tokenDictionary.pickRandomToken(language));
+        for (int i = 0; i < wordCount; i++) {
+            joiner.add(wordDictionary.pickRandomToken(language));
         }
 
         String result = joiner.toString();

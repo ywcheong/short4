@@ -37,4 +37,14 @@ public class DefaultShortURLRepository implements ShortURLRepository {
 
         return result.getModifiedCount() == 1;
     }
+
+    @Override
+    public boolean publish(ShortURL shortURL) {
+        return false;
+    }
+
+    @Override
+    public boolean activate(String token, String manageSecretHash) {
+        return false;
+    }
 }

@@ -19,7 +19,7 @@ import java.util.Date;
 @Document
 public class ShortURL {
     @Indexed(unique = true)
-    private String shortURL;
+    private String token;
 
     @NotNull
     private String originalURL;
