@@ -44,10 +44,11 @@ public class PublishController {
         if (!accessSecret.isEmpty()) {
             String accessSecretHash = passwordEncoder.encode(accessSecret);
             builder.accessSecretHash(accessSecretHash);
+        } else {
+            builder.accessSecretHash(null);
         }
 
-        String manageSecret;
-
+        String manageSecret = null;
         if (requestDTO.getIsUsingManage()) {
             // 임의로 생성된 Manage Secret 구성
             manageSecret = publishService.generateRandomManageSecret();
@@ -55,6 +56,7 @@ public class PublishController {
             builder.manageSecretHash(manageSecretHash);
             builder.isActivated(false);
         } else {
+            builder.manageSecretHash(null);
             builder.isActivated(true);
         }
 
@@ -62,7 +64,13 @@ public class PublishController {
         log.info("Publish [{}] isAccessSecretSet [{}] isManageSet [{}]",
                 publishShortURL, publishShortURL.getAccessSecretHash() == null, publishShortURL.getManageSecretHash() == null
         );
-        PublishResponseDTO responseDTO = publishService.publishURL(publishShortURL);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
+        boolean success = publishService.publishURL(publishShortURL);
+        if (success) {
+            PublishResponseDTO responseDTO = new PublishResponseDTO(manageSecret);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
