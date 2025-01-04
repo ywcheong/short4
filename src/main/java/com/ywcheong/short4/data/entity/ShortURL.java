@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,7 +18,6 @@ import java.util.Date;
 @ToString
 @Document
 public class ShortURL {
-    @Id
     @Indexed(unique = true)
     private String shortURL;
 
@@ -33,9 +31,8 @@ public class ShortURL {
     private String accessSecretHash;
     private String manageSecretHash;
 
-    @NotNull
     private Boolean isActivated;
-    private Boolean isForcefullyDowned = false;
+    private Boolean isForcefullyDowned;
 
     @CreatedDate
     private Date createdAt;

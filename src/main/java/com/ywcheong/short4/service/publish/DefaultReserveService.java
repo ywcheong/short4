@@ -26,16 +26,12 @@ public class DefaultReserveService implements ReserveService {
     public String reserveNewShortURL(String language) {
         for (int attempt = 0; attempt < maxUrlGenerateAttempt; attempt++) {
             String generatedURL = shortURLGenerator.generate(language);
-            if (!isShortURLConflict(generatedURL)) {
+            if (!shortURLRepository.attemptReserve(generatedURL)) {
                 return generatedURL;
             }
         }
 
         log.error("Reserve failed within [{}] attempts", maxUrlGenerateAttempt);
         throw new RuntimeException("Failed to generate non-conflict ShortURL within configured attempts");
-    }
-
-    private boolean isShortURLConflict(String url) {
-        return shortURLRepository.existsByShortURL(url);
     }
 }
