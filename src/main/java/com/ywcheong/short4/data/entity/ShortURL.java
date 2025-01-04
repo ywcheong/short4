@@ -1,5 +1,6 @@
 package com.ywcheong.short4.data.entity;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +21,9 @@ import java.util.Date;
 public class ShortURL {
     @Id
     @Indexed(unique = true)
-    private String token;
+    private String shortURL;
+
+    @NotNull
     private String originalURL;
 
     private int expireAfterSeconds;
@@ -30,8 +33,9 @@ public class ShortURL {
     private String accessSecretHash;
     private String manageSecretHash;
 
+    @NotNull
     private Boolean isActivated;
-    private Boolean isForcefullyDowned;
+    private Boolean isForcefullyDowned = false;
 
     @CreatedDate
     private Date createdAt;
