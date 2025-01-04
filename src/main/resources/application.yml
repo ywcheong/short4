@@ -12,4 +12,8 @@ server:
 short4:
   stat:
     expire-after-hours: 168
-  token-languages: ko-KR, en-US
+  token:
+    length: 4
+    languages: ko-KR, en-US
+  server:
+    max-url-generate-attempt: 5
