@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class PublishNewRequestDTO {
+public class PublishRequestDTO {
     // 단축할 원본URL
     private final String originalURL;
 

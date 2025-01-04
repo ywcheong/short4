@@ -1,5 +1,5 @@
 package com.ywcheong.short4.service.publish;
 
-public interface TokenGenerateService {
+public interface ReserveService {
     String secrueNewToken();
 }
