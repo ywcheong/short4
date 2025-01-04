@@ -27,7 +27,9 @@ public class ShortURL {
     private int expireAfterSeconds;
     private int expireAfterVisits;
 
+    @ToString.Exclude
     private String accessSecretHash;
+    @ToString.Exclude
     private String manageSecretHash;
 
     private Boolean isActivated;
