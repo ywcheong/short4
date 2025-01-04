@@ -2,7 +2,7 @@ package com.ywcheong.short4.controller.publish;
 
 import com.ywcheong.short4.data.dto.PublishRequestDTO;
 import com.ywcheong.short4.data.dto.PublishResponseDTO;
-import com.ywcheong.short4.data.dto.PublishServiceDTO;
+import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.service.publish.PublishService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class PublishController {
 
     @PostMapping("/new")
     public ResponseEntity<PublishResponseDTO> publishNewShortenURL(@Valid @RequestBody PublishRequestDTO requestDTO) {
-        var builder = PublishServiceDTO.builder()
+        var builder = ShortURL.builder()
                 .originalURL(requestDTO.getOriginalURL())
                 .expireAfterSeconds(requestDTO.getExpireAfterSeconds())
                 .expireAfterVisits(requestDTO.getExpireAfterVisits())
@@ -58,11 +58,11 @@ public class PublishController {
             builder.isActivated(true);
         }
 
-        PublishServiceDTO serviceDTO = builder.build();
+        ShortURL publishShortURL = builder.build();
         log.info("Publish [{}] isAccessSecretSet [{}] isManageSet [{}]",
-                serviceDTO, serviceDTO.getAccessSecretHash() == null, serviceDTO.getManageSecretHash() == null
+                publishShortURL, publishShortURL.getAccessSecretHash() == null, publishShortURL.getManageSecretHash() == null
         );
-        PublishResponseDTO responseDTO = publishService.publishURL(serviceDTO);
+        PublishResponseDTO responseDTO = publishService.publishURL(publishShortURL);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 }
