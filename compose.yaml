@@ -20,14 +20,6 @@ services:
       - short4-network
     expose:
       - '27017'
-  #  # Redis 컨테이너
-  #  redis:
-  #    image: 'redis:latest'
-  #    networks:
-  #      - short4-network
-  #    expose:
-  #      - '6379'
-  # Spring Boot(Tomcat) 컨테이너
   springboot-app:
     build:
       context: .
@@ -36,7 +28,6 @@ services:
     secrets:
       - mongodb_user_password
     depends_on:
-      #      - redis
       - mongodb
     networks:
       - short4-network
@@ -46,6 +37,6 @@ services:
 # 인증정보 정의
 secrets:
   mongodb_root_password:
-    file: ./secret/mongodb_root_password.secret
+    file: ./secret/mongodb_root_password.secret.txt
   mongodb_user_password:
-    file: ./secret/mongodb_user_password.secret
+    file: ./secret/mongodb_user_password.secret.txt
