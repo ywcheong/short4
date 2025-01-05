@@ -18,4 +18,6 @@ db.getSiblingDB("short4").createUser({
     pwd: "$MONGO_USER_PASSWORD",
     roles: [{ role: "readWrite", db: "short4" }]
 });
+db.getSiblingDB("short4").createCollection("shorturl");
+db.getSiblingDB("short4").shorturl.createIndex({"token": 1});
 EOF
