@@ -16,7 +16,7 @@ import java.util.Date;
 @Setter
 @Builder
 @ToString
-@Document
+@Document(collection = "shorturl")
 public class ShortURL {
     @Indexed(unique = true)
     private String token;

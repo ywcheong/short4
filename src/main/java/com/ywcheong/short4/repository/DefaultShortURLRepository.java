@@ -48,7 +48,13 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         queryStatement.addCriteria(Criteria.where("token").is(shortURL.getToken()));
 
         Update updateDefinition = new Update();
-        updateDefinition.set("token", shortURL.getToken()).set("originalURL", shortURL.getOriginalURL()).set("expireAfterSeconds", shortURL.getExpireAfterSeconds()).set("expireAfterVisits", shortURL.getExpireAfterVisits()).set("isActivated", shortURL.getIsActivated()).set("isForcefullyDowned", shortURL.getIsForcefullyDowned()).currentTimestamp("createdAt");
+        updateDefinition.set("token", shortURL.getToken())
+                .set("originalURL", shortURL.getOriginalURL())
+                .set("expireAfterSeconds", shortURL.getExpireAfterSeconds())
+                .set("expireAfterVisits", shortURL.getExpireAfterVisits())
+                .set("isActivated", shortURL.getIsActivated())
+                .set("isForcefullyDowned", shortURL.getIsForcefullyDowned())
+                .currentTimestamp("createdAt");
 
         if (shortURL.getAccessSecretHash() != null) {
             updateDefinition.set("accessSecretHash", shortURL.getAccessSecretHash());
