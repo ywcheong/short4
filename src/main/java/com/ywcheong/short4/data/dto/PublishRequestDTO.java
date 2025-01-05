@@ -2,27 +2,27 @@ package com.ywcheong.short4.data.dto;
 
 import com.ywcheong.short4.validator.HTTPKindURL;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@AllArgsConstructor
-@RequiredArgsConstructor
+@Setter
+@NoArgsConstructor
 @ToString
 public class PublishRequestDTO {
     // 단축할 원본URL
     @NotNull
     @HTTPKindURL
-    private final String originalURL;
+    private String originalURL;
 
     // 만료 설정
-    @Positive
+    @PositiveOrZero
     private int expireAfterSeconds = 0;
-    @Positive
+    @PositiveOrZero
     private int expireAfterVisits = 0;
 
     // 접근 비밀번호 설정시 제공
