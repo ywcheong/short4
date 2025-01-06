@@ -22,8 +22,8 @@ services:
       - '27017:27017'
   springboot-app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: production.dockerfile
     entrypoint: java -jar /app/server.jar
     secrets:
       - mongodb_user_password
@@ -37,6 +37,6 @@ services:
 # 인증정보 정의
 secrets:
   mongodb_root_password:
-    file: secret/mongodb_root_password.secret.txt
+    file: ../secret/mongodb_root_password.secret.txt
   mongodb_user_password:
-    file: secret/mongodb_user_password.secret.txt
+    file: ../secret/mongodb_user_password.secret.txt
