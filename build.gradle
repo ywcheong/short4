@@ -25,19 +25,28 @@ repositories {
 }
 
 dependencies {
+    // 믿음의 Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Configuration 파일에서 IDE 지원
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // 기초 개발 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    testImplementation 'org.springframework.security:spring-security-test'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
+
+    // 기초 테스트 의존성
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Containerized 테스트를 위해
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testImplementation "org.testcontainers:mongodb:1.19.0"
 }
 
 generateJava {
@@ -54,9 +63,9 @@ tasks.register('prepareDockerJar', Copy) {
     // 프로젝트 빌드
     dependsOn('bootJar')
 
-    // 현재 버전 번호로 빌드된 Server .jar 파일을 app.jar로 이름 변경 후 docker 폴더로 복사
+    // 현재 버전 번호로 빌드된 Server의 <.jar> 파일을 <server.jar>로 이름 변경 후 docker 폴더로 복사
     from(layout.buildDirectory.dir("libs"))
     include("${rootProject.name}-${version}.jar")
     into(layout.buildDirectory.dir("docker"))
-    rename { "app.jar" }
+    rename { "server.jar" }
 }

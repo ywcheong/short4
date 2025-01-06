@@ -1,0 +1,46 @@
+####################################
+###    Production 환경 compose    ###
+####################################
+
+# Network 명시적 정의
+networks:
+  short4-network-prod:
+    driver: bridge
+
+# 서비스 정의
+services:
+  # MongoDB 컨테이너
+  mongodb-prod:
+    image: 'mongo:latest'
+    command: mongod --auth
+    secrets:
+      - mongodb_root_password
+      - mongodb_user_password
+    volumes:
+      - ../script/prod.init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh:ro
+      - ../volume/prod/mongo/db:/data/db
+      - ../volume/prod/mongo/configdb:/data/configdb
+    networks:
+      - short4-network-prod
+    ports: # Release 때는 expose로 교체
+      - '27017:27017'
+  app-prod:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+    entrypoint: java -jar /app/server.jar --spring.profiles.active=prod # prod 프로파일로 설정
+    secrets:
+      - mongodb_user_password
+    depends_on:
+      - mongodb-prod
+    networks:
+      - short4-network-prod
+    ports:
+      - '80:8080'
+
+# 인증정보 정의
+secrets:
+  mongodb_root_password:
+    file: ../secret/mongodb_root_password.secret.txt
+  mongodb_user_password:
+    file: ../secret/mongodb_user_password.secret.txt

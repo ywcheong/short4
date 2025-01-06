@@ -1,22 +1,72 @@
-server:
-  port: 8080
-
+# Spring Profile Group 설정
 spring:
+  profiles:
+    group:
+      prod: common
+      dev: common
+      test: common
+
+---
+# Spring Profile :: 공통 설정
+spring:
+  config:
+    activate:
+      on-profile: common
   application:
     name: short4
+
+short4:
+  stat:
+    # expire-after-hours: 통계 기록이 발생한 뒤 자동 만료되기까지의 시간 (단위: hour)
+    expire-after-hours: 168
+  token:
+    # word-count: ShortURL Token에 사용할 word의 갯수
+    word-count: 4
+    # languages: dictionary 파일의 언어 종류
+    languages: ko-KR, en-US
+  server:
+    # max-url-generate-attempt: 나쁜 확률로 이미 존재하는 Token이 생성되었을 때, 최대 재시도 횟수
+    max-url-generate-attempt: 5
+    # manage-secret-length: 무작위 생성된 관리 비밀번호의 길이
+    manage-secret-length: 32
+    # allowed-protocols: 원본URL 프로토콜 중 허용되는 것
+    allowed-protocols: http, https
+
+---
+# Spring Profile :: prod 전용 설정
+# -> App + MongoDB가 Compose로 실행
+spring:
+  config:
+    activate:
+      on-profile: prod
   data:
     mongodb:
+      host: mongodb-prod
       port: 27017
       database: short4
       username: short4_user
 
+server:
+  port: 8080  # Docker compose를 통해 컨테이너 내에서 <Host 80 : 8080 Container> 포트 매핑
+
+---
+# Spring Profile :: dev 전용 설정
+# -> App은 Local, MongoDB는 Compose
+spring:
+  config:
+    activate:
+      on-profile: dev
+
 short4:
-  stat:
-    expire-after-hours: 168
-  token:
-    word-count: 4
-    languages: ko-KR, en-US
-  server:
-    max-url-generate-attempt: 5
-    allowed-protocols: http, https
-    manage-secret-length: 32
+  mongodb:
+    container-ip: localhost
+    container-port: 28000
+    container-database: short4
+
+---
+# Spring Profile :: test 전용 설정
+# -> App은 Local, MongoDB는 Testcontainer
+spring:
+  config:
+    activate:
+      on-profile: test
