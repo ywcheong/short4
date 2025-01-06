@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="Build &amp; Compose for Production" type="docker-deploy"
+                   factoryName="docker-compose.yml" server-name="Dockerengine::local">
+        <deployment type="docker-compose.yml">
+            <settings>
+                <option name="envFilePath" value=""/>
+                <option name="commandLineOptions" value="--build"/>
+                <option name="services">
+                    <list>
+                        <option value="app-prod"/>
+                        <option value="mongodb-prod"/>
+                    </list>
+                </option>
+                <option name="sourceFilePath" value="docker/prod.compose.yaml"/>
+            </settings>
+        </deployment>
+        <method v="2">
+            <option name="RunConfigurationTask" enabled="true" run_configuration_name="Prepare app.jar for Docker"
+                    run_configuration_type="GradleRunConfiguration"/>
+        </method>
+    </configuration>
+</component>
