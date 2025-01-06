@@ -29,7 +29,7 @@ public class DefaultPublishService implements PublishService {
         String token = reserveService.reserveToken("en-US");
         publishShortURL.setToken(token);
 
-        log.info("Attaching token [{}] for [{}]", token, publishShortURL);
+        log.info("Publish Service :: token attached to ShortURL :: ShortURL [{}]", publishShortURL);
         return shortURLRepository.publish(publishShortURL);
     }
 

@@ -34,11 +34,11 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         UpdateResult result = mongoTemplate.upsert(queryStatement, updateStatement, ShortURL.class);
 
         if (!result.wasAcknowledged()) {
-            log.error("reserve request [{}] not acknowledged", token);
+            log.error("ShortURL Repository -> MongoDB :: attemptReserve not acknowledged :: token [{}]", token);
             return false;
         }
 
-        log.info("reserve request [{}] resulted in [{}]", token, result);
+        log.info("ShortURL Repository -> MongoDB :: attemptReserve success :: token [{}] modifiedCount [{}]", token, result.getModifiedCount());
         return result.getModifiedCount() == 1;
     }
 
@@ -67,11 +67,11 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         UpdateResult result = mongoTemplate.updateFirst(queryStatement, updateDefinition, ShortURL.class);
 
         if (!result.wasAcknowledged()) {
-            log.error("publish request [{}] not acknowledged", shortURL);
+            log.error("ShortURL Repository -> MongoDB :: publish not acknowledged :: shortURL [{}]", shortURL);
             return false;
         }
 
-        log.info("publish request [{}] resulted in [{}]", shortURL, result);
+        log.info("ShortURL Repository -> MongoDB :: publish acknowledged :: shortURL [{}] modifiedCount [{}]", shortURL, result.getModifiedCount());
         return result.getModifiedCount() == 1;
     }
 

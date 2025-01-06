@@ -31,7 +31,7 @@ public class DefaultReserveService implements ReserveService {
             }
         }
 
-        log.error("Reserve failed within [{}] attempts", maxUrlGenerateAttempt);
-        throw new RuntimeException("Failed to generate non-conflict token within configurated number of attempts");
+        log.error("Reserve Service :: reserve failed within attempts :: attempts [{}]", maxUrlGenerateAttempt);
+        throw new RuntimeException("reserve failed within attempts");
     }
 }

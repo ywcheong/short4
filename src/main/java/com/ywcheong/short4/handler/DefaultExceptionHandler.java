@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class DefaultExceptionHandler {
     // @ExceptionHandler(Exception.class)
     public ResponseEntity<String> globalExceptionHandler(Exception e) {
-        log.info("Global Exception Handled [{}]", e.toString());
+        log.info("Somewhere -> globalExceptionHandler :: Exception [{}]", e.toString());
         return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body(e.toString());
     }
 }

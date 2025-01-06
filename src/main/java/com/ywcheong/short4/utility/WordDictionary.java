@@ -34,7 +34,7 @@ public class WordDictionary {
     @PostConstruct
     private void initTokenDictionary() {
         if (!validateTokenLanguageProperty()) {
-            throw new RuntimeException("Property not defined");
+            throw new RuntimeException("undefined property");
         }
 
         this.dictionaryOfLanguage = loadDictionaries();
@@ -43,11 +43,11 @@ public class WordDictionary {
     public boolean validateTokenLanguageProperty() {
         // Properties에서 동적으로 로드하는 Token Language 설정이 제대로 들어왔는지 검사
         if (tokenLanguages == null) {
-            log.error("Property [short4.token-languages] not defined");
+            log.error("Word Dictionary :: undefined property `short4.token-languages`");
             return false;
         }
 
-        log.info("Property [short4.token-languages] found [{}]", tokenLanguages);
+        log.info("Word Dictionary :: found property `short4.token-languages` :: value [{}]", tokenLanguages);
         return true;
     }
 
@@ -82,10 +82,10 @@ public class WordDictionary {
         Resource resource = resourceLoader.getResource(dictionaryPath);
 
         if (!resource.exists()) {
-            log.error("Resource [{}] not found", dictionaryPath);
-            throw new RuntimeException("Dictionary not found");
+            log.error("Word Dictionary :: dictionary not found :: path [{}]", dictionaryPath);
+            throw new RuntimeException("dictionary not found");
         }
-        log.info("Resource [{}] found", dictionaryPath);
+        log.info("Word Dictionary :: dictionary found :: path [{}]", dictionaryPath);
 
         // 해당 언어 사전을 로드해서 ArrayList<String>으로 변환
         String dictionaryContent;
@@ -93,7 +93,7 @@ public class WordDictionary {
         try {
             dictionaryContent = resource.getContentAsString(StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.error("Resource [{}] IOException [{}]", dictionaryPath, e.toString());
+            log.info("Word Dictionary :: IOException :: path [{}] error [{}]", dictionaryPath, e.toString());
             throw new RuntimeException(e);
         }
 

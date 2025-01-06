@@ -23,7 +23,7 @@ public class TokenGenerator {
 
     public @Nullable String generate(String language) {
         if (!wordDictionary.isSupportedLanguage(language)) {
-            log.error("Language [{}] not found", language);
+            log.error("Token Generator :: language not found :: language [{}]", language);
             return null;
         }
 
@@ -33,7 +33,7 @@ public class TokenGenerator {
         }
 
         String result = joiner.toString();
-        log.info("Generated [{}]", result);
+        log.info("Token Generator :: token generated :: token [{}]", result);
         return result;
     }
 }

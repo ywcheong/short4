@@ -32,7 +32,7 @@ public class PublishController {
 
     @PostMapping("/new")
     public ResponseEntity<PublishResponseDTO> publishNewShortenURL(@Valid @RequestBody PublishRequestDTO requestDTO) {
-        log.info("/publish/new endpoint -> Publish Controller [{}]", requestDTO);
+        log.info("/publish/new endpoint -> Publish Controller :: request [{}]", requestDTO);
 
         var builder = ShortURL.builder()
                 .originalURL(requestDTO.getOriginalURL())
@@ -63,7 +63,7 @@ public class PublishController {
         }
 
         ShortURL publishShortURL = builder.build();
-        log.info("Publish Controller -> Publish Service [{}] isAccessSecretSet [{}] isManageSecretSet [{}]",
+        log.info("Publish Controller -> Publish Service :: DTO [{}] isAccessSecretSet [{}] isManageSecretSet [{}]",
                 publishShortURL, publishShortURL.getAccessSecretHash() != null, publishShortURL.getManageSecretHash() != null
         );
 
