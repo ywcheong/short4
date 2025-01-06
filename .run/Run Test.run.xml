@@ -1,7 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Run Test on Project" type="JUnit" factoryName="JUnit">
+    <configuration default="false" name="Run Test" type="JUnit" factoryName="JUnit">
         <module name="short4.test"/>
-        <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true"/>
+        <projectPathOnTarget name="projectPathOnTarget" value="/app"/>
+        <target name="@@@LOCAL@@@"/>
         <option name="ALTERNATIVE_JRE_PATH" value="17"/>
         <option name="PACKAGE_NAME" value=""/>
         <option name="MAIN_CLASS_NAME" value=""/>
