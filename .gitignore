@@ -34,11 +34,15 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+/.vscode/
 
 ### Secret Files ###
-secret/
-*.secret
+/secret/**
 
-### Development Phase Docker Volume ###
-volume/*
+### Logs ###
+/logs/**
+
+### Docker Volume ###
+/volume/**
+!/volume/**/
+!/volume/**/emptyfile
