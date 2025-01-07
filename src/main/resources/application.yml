@@ -4,7 +4,7 @@ spring:
     group:
       prod: common
       dev: common
-      test: common
+      test: dev, common
 
 ---
 # Spring Profile :: 공통 설정
