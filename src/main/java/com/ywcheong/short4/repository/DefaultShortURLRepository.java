@@ -34,16 +34,21 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         UpdateResult result = mongoTemplate.upsert(queryStatement, updateStatement, ShortURL.class);
 
         if (!result.wasAcknowledged()) {
-            log.error("ShortURL Repository -> MongoDB :: attemptReserve not acknowledged :: token [{}]", token);
+            log.error("ShortURL Repository -> MongoDB :: reserve not acknowledged :: token [{}] result [{}]", token, result);
+            throw new RuntimeException("reserve not acknowledged");
+        }
+
+        if (result.getModifiedCount() != 1) {
+            log.info("ShortURL Repository -> MongoDB :: reserve failed since existing token :: token [{}] result [{}]", token, result);
             return false;
         }
 
-        log.info("ShortURL Repository -> MongoDB :: attemptReserve success :: token [{}] modifiedCount [{}]", token, result.getModifiedCount());
-        return result.getModifiedCount() == 1;
+        log.info("ShortURL Repository -> MongoDB :: reserve success :: shortURL [{}]", token);
+        return true;
     }
 
     @Override
-    public boolean publish(ShortURL shortURL) {
+    public ShortURL publish(ShortURL shortURL) {
         Query queryStatement = new Query();
         queryStatement.addCriteria(Criteria.where("token").is(shortURL.getToken()));
 
@@ -54,25 +59,24 @@ public class DefaultShortURLRepository implements ShortURLRepository {
                 .set("expireAfterVisits", shortURL.getExpireAfterVisits())
                 .set("isActivated", shortURL.getIsActivated())
                 .set("isForcefullyDowned", shortURL.getIsForcefullyDowned())
+                .set("accessSecretHash", shortURL.getAccessSecretHash())
+                .set("manageSecretHash", shortURL.getManageSecretHash())
                 .currentTimestamp("createdAt");
-
-        if (shortURL.getAccessSecretHash() != null) {
-            updateDefinition.set("accessSecretHash", shortURL.getAccessSecretHash());
-        }
-
-        if (shortURL.getManageSecretHash() != null) {
-            updateDefinition.set("manageSecretHash", shortURL.getManageSecretHash());
-        }
 
         UpdateResult result = mongoTemplate.updateFirst(queryStatement, updateDefinition, ShortURL.class);
 
         if (!result.wasAcknowledged()) {
-            log.error("ShortURL Repository -> MongoDB :: publish not acknowledged :: shortURL [{}]", shortURL);
-            return false;
+            log.error("ShortURL Repository -> MongoDB :: publish not acknowledged :: shortURL [{}] result [{}]", shortURL, result);
+            throw new RuntimeException("publish not acknowledged");
         }
 
-        log.info("ShortURL Repository -> MongoDB :: publish acknowledged :: shortURL [{}] modifiedCount [{}]", shortURL, result.getModifiedCount());
-        return result.getModifiedCount() == 1;
+        if (result.getModifiedCount() != 1) {
+            log.error("ShortURL Repository -> MongoDB :: publish modified count not 1 :: shortURL [{}] result [{}]", shortURL, result);
+            throw new RuntimeException("publish modified count not 1");
+        }
+
+        log.info("ShortURL Repository -> MongoDB :: publish acknowledged :: shortURL [{}]", shortURL);
+        return shortURL;
     }
 
     @Override
