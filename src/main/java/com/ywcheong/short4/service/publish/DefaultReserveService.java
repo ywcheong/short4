@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class DefaultReserveService implements ReserveService {
-
     private final TokenGenerator tokenGenerator;
     private final ShortURLRepository shortURLRepository;
     @Value("${short4.server.max-url-generate-attempt}")
@@ -26,7 +25,7 @@ public class DefaultReserveService implements ReserveService {
     public String reserveToken(String language) {
         for (int attempt = 0; attempt < maxUrlGenerateAttempt; attempt++) {
             String generatedToken = tokenGenerator.generate(language);
-            if (!shortURLRepository.attemptReserve(generatedToken)) {
+            if (shortURLRepository.attemptReserve(generatedToken)) {
                 return generatedToken;
             }
         }
