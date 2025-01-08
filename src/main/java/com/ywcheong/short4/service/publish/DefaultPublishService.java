@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 @Service
 @Slf4j
 public class DefaultPublishService implements PublishService {
+    private static final String MANAGE_SECRET_CHAR_POOL = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private final PasswordEncoder passwordEncoder;
     private final ReserveService reserveService;
     private final ShortURLRepository shortURLRepository;
@@ -73,8 +73,9 @@ public class DefaultPublishService implements PublishService {
     public String generateRandomManageSecret() {
         SecureRandom random = new SecureRandom();
 
-        byte[] manageSecretBytes = new byte[manageSecretLength];
-        random.nextBytes(manageSecretBytes);
-        return new String(manageSecretBytes, StandardCharsets.UTF_8);
+        return random.ints(manageSecretLength, 0, MANAGE_SECRET_CHAR_POOL.length())
+                .mapToObj(MANAGE_SECRET_CHAR_POOL::charAt)
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 }
