@@ -1,6 +1,7 @@
 package com.ywcheong.short4.repository;
 
 import com.mongodb.client.result.UpdateResult;
+import com.ywcheong.short4.data.dto.ActivateResult;
 import com.ywcheong.short4.data.entity.ShortURL;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class DefaultShortURLRepository implements ShortURLRepository {
     }
 
     @Override
-    public boolean activate(String token, String manageSecretHash) {
-        return false;
+    public ActivateResult activate(String token, String manageSecretHash) {
+
     }
 }

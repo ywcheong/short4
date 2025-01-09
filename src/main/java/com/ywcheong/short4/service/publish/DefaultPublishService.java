@@ -1,5 +1,7 @@
 package com.ywcheong.short4.service.publish;
 
+import com.ywcheong.short4.data.dto.ActivateRequestDTO;
+import com.ywcheong.short4.data.dto.ActivateResult;
 import com.ywcheong.short4.data.dto.PublishRequestDTO;
 import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.repository.ShortURLRepository;
@@ -55,6 +57,14 @@ public class DefaultPublishService implements PublishService {
         }
 
         return shortURLRepository.publish(publishShortURL);
+    }
+
+    @Override
+    public ActivateResult activateURL(ActivateRequestDTO requestDTO) {
+        String token = requestDTO.getToken();
+        String manageSecret = requestDTO.getManageSecret();
+
+        return shortURLRepository.activate(token, manageSecret);
     }
 
     public String computeAccessSecretHash(String accessSecret) {
