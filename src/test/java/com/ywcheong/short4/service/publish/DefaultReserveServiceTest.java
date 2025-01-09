@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -16,8 +18,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 @SpringBootTest(classes = {DefaultReserveService.class,})
+@Execution(ExecutionMode.CONCURRENT)
 @ActiveProfiles("test")
-@DisplayName("단위 테스트 :: ReserveService")
+@DisplayName("단위 테스트 :: DefaultReserveService")
 class DefaultReserveServiceTest {
     // 테스트 대상 객체의 의존성
     @MockitoBean

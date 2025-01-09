@@ -42,7 +42,6 @@ public class DefaultPublishService implements PublishService {
         // 토큰 처리
         String token = reserveService.reserveToken("en-US");
         publishShortURL.setToken(token);
-        log.info("Publish Service :: reserved token attached :: ShortURL [{}]", publishShortURL);
 
         // accessSecret -> accessSecretHash 변환
         String accessSecretHash = computeAccessSecretHash(requestDTO.getAccessSecret());
@@ -56,6 +55,7 @@ public class DefaultPublishService implements PublishService {
             publishShortURL.setIsActivated(true);
         }
 
+        log.info("Publish Service -> ShortURL Repository  :: ShortURL [{}]", publishShortURL);
         return shortURLRepository.publish(publishShortURL);
     }
 
