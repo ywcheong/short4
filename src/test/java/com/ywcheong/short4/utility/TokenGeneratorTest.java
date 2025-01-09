@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -11,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(classes = {
         TokenGenerator.class, WordDictionary.class
 })
+@Execution(ExecutionMode.CONCURRENT)
 @ActiveProfiles("test")
 @DisplayName("단위 테스트 :: TokenGenerator")
 public class TokenGeneratorTest {

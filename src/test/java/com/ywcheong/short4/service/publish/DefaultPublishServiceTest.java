@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,8 +27,9 @@ import static org.mockito.BDDMockito.then;
         PasswordEncoder.class,
         SecurityConfig.class
 })
+@Execution(ExecutionMode.CONCURRENT)
 @ActiveProfiles("test")
-@DisplayName("단위 테스트 :: PublishService")
+@DisplayName("단위 테스트 :: DefaultPublishService")
 class DefaultPublishServiceTest {
     private final String originalURL = "https://example.com";
     @MockitoBean
