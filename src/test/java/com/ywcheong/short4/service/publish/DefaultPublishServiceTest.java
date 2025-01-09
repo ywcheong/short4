@@ -158,7 +158,7 @@ class DefaultPublishServiceTest {
         @Test
         @DisplayName("랜덤한 manageSecret을 생성한다")
         public void manageSecretTest() {
-            String randomSecret = publishService.generateRandomManageSecret();
+            String randomSecret = publishService.createManageSecret();
             System.out.println("generated secret: " + randomSecret);
             Assertions.assertEquals(manageSecretLength, randomSecret.length());
         }

@@ -1,6 +1,5 @@
 package com.ywcheong.short4.controller.publish;
 
-import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.service.publish.PublishService;
 import com.ywcheong.short4.validator.HTTPKindURLValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -52,9 +51,7 @@ public class PublishControllerTest {
                 publishService.publishURL(argThat(
                         dto -> dto != null && Objects.equals(dto.getOriginalURL(), originalURL)
                 ))
-        ).willReturn(
-                ShortURL.builder().originalURL(originalURL).build()
-        );
+        ).willReturn(null);
 
         // When...
         mvc.perform(post("/publish/new").content("""

@@ -25,7 +25,7 @@ public class DefaultReserveService implements ReserveService {
     public String reserveToken(String language) {
         for (int attempt = 0; attempt < maxUrlGenerateAttempt; attempt++) {
             String generatedToken = tokenGenerator.generate(language);
-            if (shortURLRepository.attemptReserve(generatedToken)) {
+            if (shortURLRepository.tryReserveThenResult(generatedToken)) {
                 return generatedToken;
             }
         }

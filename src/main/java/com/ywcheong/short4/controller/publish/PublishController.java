@@ -1,7 +1,6 @@
 package com.ywcheong.short4.controller.publish;
 
 import com.ywcheong.short4.data.dto.*;
-import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.service.publish.PublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +28,9 @@ public class PublishController {
     @PostMapping("/new")
     public ResponseEntity<PublishResponseDTO> publishNewShortenURL(@Validated @RequestBody PublishRequestDTO requestDTO) {
         log.info("Publish Controller :: /publish/new :: [{}]", requestDTO);
-        ShortURL resultShortURL = publishService.publishURL(requestDTO);
+        String manageSecret = publishService.publishURL(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new PublishResponseDTO(resultShortURL.getManageSecretHash()));
+                .body(new PublishResponseDTO(manageSecret));
     }
 
     @PostMapping("/activate")
@@ -44,7 +43,7 @@ public class PublishController {
                     new SimpleMessageResponseDTO("성공")
             );
 
-            case ALREADY_ACTIVATED -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(
+            case ALREADY_ACTIVATED -> ResponseEntity.status(HttpStatus.ACCEPTED).body(
                     new SimpleMessageResponseDTO("주어진 토큰에 대응하는 단축URL은 이미 활성화되어 있습니다.")
             );
 

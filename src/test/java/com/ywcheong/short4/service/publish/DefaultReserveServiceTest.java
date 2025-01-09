@@ -41,14 +41,14 @@ class DefaultReserveServiceTest {
             String sampleToken = "sample+token";
 
             given(mockTokenGenerator.generate("en-US")).willReturn(sampleToken);
-            given(mockRepository.attemptReserve(sampleToken)).willReturn(true);
+            given(mockRepository.tryReserveThenResult(sampleToken)).willReturn(true);
 
             // When...
             String reservedToken = reserveService.reserveToken("en-US");
 
             // Then...
             then(mockTokenGenerator).should().generate("en-US");
-            then(mockRepository).should().attemptReserve(sampleToken);
+            then(mockRepository).should().tryReserveThenResult(sampleToken);
             then(mockRepository).shouldHaveNoMoreInteractions();
             Assertions.assertEquals(sampleToken, reservedToken);
         }
@@ -61,16 +61,16 @@ class DefaultReserveServiceTest {
             String sampleToken = "sample+token";
 
             given(mockTokenGenerator.generate("en-US")).willReturn(failToken).willReturn(sampleToken);
-            given(mockRepository.attemptReserve(sampleToken)).willReturn(true);
-            given(mockRepository.attemptReserve(failToken)).willReturn(false);
+            given(mockRepository.tryReserveThenResult(sampleToken)).willReturn(true);
+            given(mockRepository.tryReserveThenResult(failToken)).willReturn(false);
 
             // When...
             String reservedToken = reserveService.reserveToken("en-US");
 
             // Then...
             then(mockTokenGenerator).should(times(2)).generate("en-US");
-            then(mockRepository).should().attemptReserve(failToken);
-            then(mockRepository).should().attemptReserve(sampleToken);
+            then(mockRepository).should().tryReserveThenResult(failToken);
+            then(mockRepository).should().tryReserveThenResult(sampleToken);
             then(mockRepository).shouldHaveNoMoreInteractions();
             Assertions.assertEquals(sampleToken, reservedToken);
         }
@@ -83,8 +83,8 @@ class DefaultReserveServiceTest {
             String sampleToken = "sample+token";
 
             given(mockTokenGenerator.generate("en-US")).willReturn(failToken);
-            given(mockRepository.attemptReserve(sampleToken)).willReturn(true);
-            given(mockRepository.attemptReserve(failToken)).willReturn(false);
+            given(mockRepository.tryReserveThenResult(sampleToken)).willReturn(true);
+            given(mockRepository.tryReserveThenResult(failToken)).willReturn(false);
 
             // When...
             // Then...

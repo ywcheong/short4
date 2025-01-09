@@ -4,7 +4,7 @@ package com.ywcheong.short4.repository;
 import com.ywcheong.short4.data.entity.ShortURL;
 
 public interface ShortURLRepository {
-    boolean attemptReserve(String token);
+    boolean tryReserveThenResult(String token);
 
     ShortURL publish(ShortURL shortURL);
 

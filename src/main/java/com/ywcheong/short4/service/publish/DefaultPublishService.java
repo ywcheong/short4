@@ -31,7 +31,7 @@ public class DefaultPublishService implements PublishService {
     }
 
     @Override
-    public ShortURL publishURL(PublishRequestDTO requestDTO) {
+    public String publishURL(PublishRequestDTO requestDTO) {
         ShortURL publishShortURL = ShortURL.builder()
                 .originalURL(requestDTO.getOriginalURL())
                 .expireAfterSeconds(requestDTO.getExpireAfterSeconds())
@@ -48,15 +48,21 @@ public class DefaultPublishService implements PublishService {
         publishShortURL.setAccessSecretHash(accessSecretHash);
 
         // if (manage) -> manageSecretHash 생성
+        String manageSecret;
         if (requestDTO.getIsUsingManage()) {
-            publishShortURL.setManageSecretHash(createManageSecretHash());
+            manageSecret = createManageSecret();
+            String manageSecretHash = passwordEncoder.encode(manageSecret);
+            publishShortURL.setManageSecretHash(manageSecretHash);
             publishShortURL.setIsActivated(false);
         } else {
+            manageSecret = null;
+            publishShortURL.setManageSecretHash(null);
             publishShortURL.setIsActivated(true);
         }
 
         log.info("Publish Service -> ShortURL Repository  :: ShortURL [{}]", publishShortURL);
-        return shortURLRepository.publish(publishShortURL);
+        shortURLRepository.publish(publishShortURL);
+        return manageSecret;
     }
 
     @Override
@@ -67,20 +73,14 @@ public class DefaultPublishService implements PublishService {
         return shortURLRepository.activate(token, manageSecret);
     }
 
-    public String computeAccessSecretHash(String accessSecret) {
+    private String computeAccessSecretHash(String accessSecret) {
         if (accessSecret.isEmpty()) {
             return null;
         }
         return passwordEncoder.encode(accessSecret);
     }
 
-    public String createManageSecretHash() {
-        String manageSecret = generateRandomManageSecret();
-        return passwordEncoder.encode(manageSecret);
-    }
-
-    @Override
-    public String generateRandomManageSecret() {
+    public String createManageSecret() {
         SecureRandom random = new SecureRandom();
 
         return random.ints(manageSecretLength, 0, MANAGE_SECRET_CHAR_POOL.length())
