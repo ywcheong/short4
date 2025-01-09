@@ -4,7 +4,7 @@ spring:
     group:
       prod: common
       dev: common
-      test: dev, common
+      test: common
 
 ---
 # Spring Profile :: 공통 설정
@@ -70,3 +70,9 @@ spring:
   config:
     activate:
       on-profile: test
+
+short4:
+  mongodb:
+    container-ip: localhost
+    container-port: 28000
+    container-database: short4_test
