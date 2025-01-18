@@ -8,5 +8,7 @@ public interface ShortURLRepository {
 
     ShortURL publish(ShortURL shortURL);
 
+    ShortURL findByToken(String token);
+
     ActivateResultType activate(String token, String manageSecretHash);
 }

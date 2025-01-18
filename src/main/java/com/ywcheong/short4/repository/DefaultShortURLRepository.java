@@ -4,6 +4,8 @@ import com.mongodb.client.result.UpdateResult;
 import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.data.types.ActivateResultType;
 import com.ywcheong.short4.exception.MongoFailureException;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,7 +28,7 @@ public class DefaultShortURLRepository implements ShortURLRepository {
     }
 
     @Override
-    public boolean tryReserveThenResult(String token) {
+    public boolean tryReserveThenResult(@NotNull String token) {
         // 1. shortURL이 DB에 존재 -> 아무것도 하지 않고 false를 반환한다.
         // 2. shortURL이 DB에 부재 -> {shortURL} 삽입 후 true를 반환한다.
 
@@ -53,7 +55,8 @@ public class DefaultShortURLRepository implements ShortURLRepository {
     }
 
     @Override
-    public ShortURL publish(ShortURL shortURL) {
+    @NotNull
+    public ShortURL publish(@NotNull ShortURL shortURL) {
         Query queryStatement = new Query();
         queryStatement.addCriteria(Criteria.where("token").is(shortURL.getToken()));
 
@@ -86,11 +89,12 @@ public class DefaultShortURLRepository implements ShortURLRepository {
     }
 
     @Override
-    public ActivateResultType activate(String token, String manageSecretHash) {
+    public ActivateResultType activate(@NotNull String token, @Nullable String manageSecretHash) {
         return activate(token, manageSecretHash, 2);
     }
 
-    public ActivateResultType activate(String token, String manageSecretHash, int recursionDepth) {
+    @NotNull
+    public ActivateResultType activate(@NotNull String token, @Nullable String manageSecretHash, int recursionDepth) {
         if (recursionDepth <= 0) {
             log.error("ShortURL Repository :: activate recursion unexpectedly too deep :: token [{}]", token);
             throw new RuntimeException("activate recursion unexpectedly too deep");
@@ -146,5 +150,13 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         // 활성화 성공했습니다.
         log.error("ShortURL Repository :: activate acknowledged :: token [{}] result [{}]", token, result);
         return ActivateResultType.SUCCESS;
+    }
+
+    @Override
+    @Nullable
+    public ShortURL findByToken(@NotNull String token) {
+        Query queryStatement = new Query();
+        queryStatement.addCriteria(Criteria.where("token").is(token));
+        return mongoTemplate.findOne(queryStatement, ShortURL.class);
     }
 }

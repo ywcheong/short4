@@ -9,6 +9,6 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class SimpleMessageResponseDTO {
+public class SimpleMessageResponse {
     private String message;
 }
