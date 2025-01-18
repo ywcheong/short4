@@ -1,7 +1,7 @@
 package com.ywcheong.short4.service.publish;
 
 import com.ywcheong.short4.config.SecurityConfig;
-import com.ywcheong.short4.data.dto.PublishRequestDTO;
+import com.ywcheong.short4.data.dto.publish.PublishRequest;
 import com.ywcheong.short4.data.entity.ShortURL;
 import com.ywcheong.short4.repository.ShortURLRepository;
 import org.junit.jupiter.api.Assertions;
@@ -39,7 +39,7 @@ class DefaultPublishServiceTest {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    PublishService publishService;
+    DefaultPublishService publishService;
 
     @Value("${short4.server.manage-secret-length}")
     private int manageSecretLength;
@@ -64,7 +64,7 @@ class DefaultPublishServiceTest {
             );
 
             // When...
-            PublishRequestDTO requestDTO = PublishRequestDTO.builder()
+            PublishRequest requestDTO = PublishRequest.builder()
                     .originalURL(originalURL)
                     .expireAfterSeconds(1234)
                     .expireAfterVisits(5678)
@@ -105,7 +105,7 @@ class DefaultPublishServiceTest {
             );
 
             // When...
-            PublishRequestDTO requestDTO = PublishRequestDTO.builder()
+            PublishRequest requestDTO = PublishRequest.builder()
                     .originalURL(originalURL)
                     .expireAfterSeconds(1234)
                     .expireAfterVisits(5678)
@@ -153,12 +153,12 @@ class DefaultPublishServiceTest {
     }
 
     @Nested
-    @DisplayName("단위 테스트 :: generateRandomManageSecret")
+    @DisplayName("단위 테스트 :: createRandomManageSecret")
     class generateRandomManageSecretTest {
         @Test
         @DisplayName("랜덤한 manageSecret을 생성한다")
         public void manageSecretTest() {
-            String randomSecret = publishService.createManageSecret();
+            String randomSecret = publishService.createRandomManageSecret();
             System.out.println("generated secret: " + randomSecret);
             Assertions.assertEquals(manageSecretLength, randomSecret.length());
         }

@@ -1,4 +1,4 @@
-package com.ywcheong.short4.data.dto;
+package com.ywcheong.short4.data.dto.publish;
 
 import com.ywcheong.short4.validator.HTTPKindURL;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class PublishRequestDTO {
+public class PublishRequest {
     // 단축할 원본URL
     @NotNull(message = "필수 필드입니다.")
     @HTTPKindURL(message = "HTTP 및 HTTPS 프로토콜만 입력할 수 있습니다.")

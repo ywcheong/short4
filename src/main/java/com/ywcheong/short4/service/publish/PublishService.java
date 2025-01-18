@@ -1,12 +1,14 @@
 package com.ywcheong.short4.service.publish;
 
-import com.ywcheong.short4.data.dto.ActivateRequestDTO;
-import com.ywcheong.short4.data.dto.ActivateResult;
-import com.ywcheong.short4.data.dto.PublishRequestDTO;
+import com.ywcheong.short4.data.dto.publish.ActivateRequest;
+import com.ywcheong.short4.data.dto.publish.ActivateResult;
+import com.ywcheong.short4.data.dto.publish.PublishRequest;
+import com.ywcheong.short4.data.dto.publish.PublishResult;
 
 public interface PublishService {
-    String publishURL(PublishRequestDTO shortURL);
-    ActivateResult activateURL(ActivateRequestDTO requestDTO);
+    PublishResult publishURL(PublishRequest shortURL);
 
-    String createManageSecret();
+    ActivateResult activateURL(ActivateRequest requestDTO);
+
+    String createRandomManageSecret();
 }

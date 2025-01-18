@@ -1,4 +1,4 @@
-package com.ywcheong.short4.data.dto;
+package com.ywcheong.short4.data.dto.publish;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ActivateRequestDTO {
+public class ActivateRequest {
     @NotNull(message = "필수 필드입니다.")
     private String token;
 

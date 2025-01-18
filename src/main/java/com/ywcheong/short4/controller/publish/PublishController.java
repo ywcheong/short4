@@ -1,6 +1,6 @@
 package com.ywcheong.short4.controller.publish;
 
-import com.ywcheong.short4.data.dto.*;
+import com.ywcheong.short4.data.dto.publish.*;
 import com.ywcheong.short4.service.publish.PublishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,33 +26,32 @@ public class PublishController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<PublishResponseDTO> publishNewShortenURL(@Validated @RequestBody PublishRequestDTO requestDTO) {
-        log.info("Publish Controller :: /publish/new :: [{}]", requestDTO);
-        String manageSecret = publishService.publishURL(requestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new PublishResponseDTO(manageSecret));
+    public ResponseEntity<PublishResponse> newURL(@Validated @RequestBody PublishRequest request) {
+        log.info("Publish Controller :: /publish/new :: [{}]", request);
+        PublishResult response = publishService.publishURL(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/activate")
-    public ResponseEntity<SimpleMessageResponseDTO> activateShortURL(@Validated @RequestBody ActivateRequestDTO requestDTO) {
-        log.info("Publish Controller :: /publish/activate :: [{}]", requestDTO);
-        ActivateResult result = publishService.activateURL(requestDTO);
+    public ResponseEntity<ActivateResponse> activateURL(@Validated @RequestBody ActivateRequest request) {
+        log.info("Publish Controller :: /publish/activate :: [{}]", request);
+        ActivateResult result = publishService.activateURL(request);
 
-        return switch (result.getResult()) {
+        return switch (result.getResultType()) {
             case SUCCESS -> ResponseEntity.status(HttpStatus.OK).body(
-                    new SimpleMessageResponseDTO("성공")
+                    new ActivateResponse("성공")
             );
 
             case ALREADY_ACTIVATED -> ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                    new SimpleMessageResponseDTO("주어진 토큰에 대응하는 단축URL은 이미 활성화되어 있습니다.")
+                    new ActivateResponse("주어진 토큰에 대응하는 단축URL은 이미 활성화되어 있습니다.")
             );
 
             case TOKEN_NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new SimpleMessageResponseDTO("주어진 토큰에 대응하는 단축URL은 없습니다.")
+                    new ActivateResponse("주어진 토큰에 대응하는 단축URL은 없습니다.")
             );
 
             case WRONG_MANAGE_SECRET -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                    new SimpleMessageResponseDTO("잘못된 관리 비밀번호입니다.")
+                    new ActivateResponse("잘못된 관리 비밀번호입니다.")
             );
         };
     }

@@ -1,8 +1,9 @@
 package com.ywcheong.short4.repository;
 
 import com.mongodb.client.result.UpdateResult;
-import com.ywcheong.short4.data.dto.ActivateResult;
 import com.ywcheong.short4.data.entity.ShortURL;
+import com.ywcheong.short4.data.types.ActivateResultType;
+import com.ywcheong.short4.exception.MongoFailureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -72,12 +73,12 @@ public class DefaultShortURLRepository implements ShortURLRepository {
 
         if (!result.wasAcknowledged()) {
             log.error("ShortURL Repository :: publish not acknowledged :: shortURL [{}] result [{}]", shortURL, result);
-            throw new RuntimeException("publish not acknowledged");
+            throw new MongoFailureException("publish not acknowledged");
         }
 
         if (result.getModifiedCount() != 1) {
             log.error("ShortURL Repository :: publish modified count not 1 :: shortURL [{}] result [{}]", shortURL, result);
-            throw new RuntimeException("publish modified count not 1");
+            throw new MongoFailureException("publish modified count not 1");
         }
 
         log.info("ShortURL Repository :: publish acknowledged :: shortURL [{}]", shortURL);
@@ -85,11 +86,11 @@ public class DefaultShortURLRepository implements ShortURLRepository {
     }
 
     @Override
-    public ActivateResult activate(String token, String manageSecretHash) {
+    public ActivateResultType activate(String token, String manageSecretHash) {
         return activate(token, manageSecretHash, 2);
     }
 
-    public ActivateResult activate(String token, String manageSecretHash, int recursionDepth) {
+    public ActivateResultType activate(String token, String manageSecretHash, int recursionDepth) {
         if (recursionDepth <= 0) {
             log.error("ShortURL Repository :: activate recursion unexpectedly too deep :: token [{}]", token);
             throw new RuntimeException("activate recursion unexpectedly too deep");
@@ -103,20 +104,20 @@ public class DefaultShortURLRepository implements ShortURLRepository {
         // 그런 토큰 없습니다 or 아직 예약(attemptReserve)만 된 토큰입니다 :(
         if (foundShortURL == null || foundShortURL.getIsActivated() == null) {
             log.info("ShortURL Repository :: activate attempt but token not found :: token [{}]", token);
-            return new ActivateResult(ActivateResult.ActivateResultType.TOKEN_NOT_FOUND);
+            return ActivateResultType.TOKEN_NOT_FOUND;
         }
 
         // 관리 비밀번호를 틀린 당신에게 해 줄 말이 없습니다 :(
         String storedManageSecretHash = foundShortURL.getManageSecretHash();
         if (!passwordEncoder.matches(manageSecretHash, storedManageSecretHash)) {
             log.info("ShortURL Repository :: activate attempt but wrong manage secret :: token [{}]", token);
-            return new ActivateResult(ActivateResult.ActivateResultType.WRONG_MANAGE_SECRET);
+            return ActivateResultType.WRONG_MANAGE_SECRET;
         }
 
         // 관리 비밀번호는 맞췄는데, 이미 활성화되어 있습니다 :(
         if (foundShortURL.getIsActivated()) {
             log.info("ShortURL Repository :: activate attempt but already activated :: token [{}]", token);
-            return new ActivateResult(ActivateResult.ActivateResultType.ALREADY_ACTIVATED);
+            return ActivateResultType.ALREADY_ACTIVATED;
         }
 
         // 관리 비밀번호도 맞췄고, 활성화가 안 되어 있으니 활성화를 시도합니다...
@@ -144,6 +145,6 @@ public class DefaultShortURLRepository implements ShortURLRepository {
 
         // 활성화 성공했습니다.
         log.error("ShortURL Repository :: activate acknowledged :: token [{}] result [{}]", token, result);
-        return new ActivateResult(ActivateResult.ActivateResultType.SUCCESS);
+        return ActivateResultType.SUCCESS;
     }
 }

@@ -1,10 +1,14 @@
 package com.ywcheong.short4.service.publish;
 
-import com.ywcheong.short4.data.dto.ActivateRequestDTO;
-import com.ywcheong.short4.data.dto.ActivateResult;
-import com.ywcheong.short4.data.dto.PublishRequestDTO;
+import com.ywcheong.short4.data.dto.publish.ActivateRequest;
+import com.ywcheong.short4.data.dto.publish.ActivateResult;
+import com.ywcheong.short4.data.dto.publish.PublishRequest;
+import com.ywcheong.short4.data.dto.publish.PublishResult;
 import com.ywcheong.short4.data.entity.ShortURL;
+import com.ywcheong.short4.data.types.ActivateResultType;
 import com.ywcheong.short4.repository.ShortURLRepository;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,73 +20,96 @@ import java.security.SecureRandom;
 @Service
 @Slf4j
 public class DefaultPublishService implements PublishService {
+    // 비밀번호 풀 (i, I, l, L, 1, 0, o, O 제외됨)
     private static final String MANAGE_SECRET_CHAR_POOL = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    // 의존성 주입
     private final PasswordEncoder passwordEncoder;
     private final ReserveService reserveService;
     private final ShortURLRepository shortURLRepository;
+    // 외부 설정
     @Value("${short4.server.manage-secret-length}")
     private int manageSecretLength;
 
     @Autowired
-    public DefaultPublishService(PasswordEncoder passwordEncoder, ReserveService reserveService, ShortURLRepository shortURLRepository) {
+    public DefaultPublishService(PasswordEncoder passwordEncoder,
+                                 ReserveService reserveService,
+                                 ShortURLRepository shortURLRepository) {
         this.passwordEncoder = passwordEncoder;
         this.reserveService = reserveService;
         this.shortURLRepository = shortURLRepository;
     }
 
     @Override
-    public String publishURL(PublishRequestDTO requestDTO) {
-        ShortURL publishShortURL = ShortURL.builder()
-                .originalURL(requestDTO.getOriginalURL())
-                .expireAfterSeconds(requestDTO.getExpireAfterSeconds())
-                .expireAfterVisits(requestDTO.getExpireAfterVisits())
-                .isForcefullyDowned(false)
-                .build();
-
-        // 토큰 처리
+    public @NotNull PublishResult publishURL(@NotNull PublishRequest request) {
+        // token 발행
         String token = reserveService.reserveToken("en-US");
-        publishShortURL.setToken(token);
 
-        // accessSecret -> accessSecretHash 변환
-        String accessSecretHash = computeAccessSecretHash(requestDTO.getAccessSecret());
-        publishShortURL.setAccessSecretHash(accessSecretHash);
+        // accessSecret & manageSecret 설정
+        String accessSecret = computeAccessSecret(request);
+        String manageSecret = computeManangeSecret(request);
 
-        // if (manage) -> manageSecretHash 생성
-        String manageSecret;
-        if (requestDTO.getIsUsingManage()) {
-            manageSecret = createManageSecret();
-            String manageSecretHash = passwordEncoder.encode(manageSecret);
-            publishShortURL.setManageSecretHash(manageSecretHash);
-            publishShortURL.setIsActivated(false);
-        } else {
-            manageSecret = null;
-            publishShortURL.setManageSecretHash(null);
-            publishShortURL.setIsActivated(true);
-        }
+        // secret 해시처리
+        String accessSecretHash = computeHashedSecret(accessSecret);
+        String manageSecretHash = computeHashedSecret(manageSecret);
 
+        // ShortURL 엔티티 생성
+        ShortURL publishShortURL = makePublishShortURL(request, token, accessSecretHash, manageSecretHash);
+
+        // 생성된 객체 Repository 전달
         log.info("Publish Service -> ShortURL Repository  :: ShortURL [{}]", publishShortURL);
         shortURLRepository.publish(publishShortURL);
-        return manageSecret;
+
+        // 응답 반환
+        return new PublishResult(token, manageSecret);
+    }
+
+    private @Nullable String computeAccessSecret(@NotNull PublishRequest request) {
+        String accessSecret = request.getAccessSecret();
+        if (!accessSecret.isEmpty())
+            return accessSecret;
+        return null;
+    }
+
+    private @Nullable String computeManangeSecret(@NotNull PublishRequest request) {
+        if (request.getIsUsingManage())
+            return createRandomManageSecret();
+        return null;
+    }
+
+    private @Nullable String computeHashedSecret(@Nullable String secret) {
+        if (secret == null)
+            return null;
+        return passwordEncoder.encode(secret);
+    }
+
+    private @NotNull ShortURL makePublishShortURL(@NotNull PublishRequest request,
+                                                  @NotNull String token,
+                                                  @Nullable String accessSecretHash,
+                                                  @Nullable String manageSecretHash) {
+        return ShortURL.builder()
+                .token(token)
+                .originalURL(request.getOriginalURL())
+                .expireAfterSeconds(request.getExpireAfterSeconds())
+                .expireAfterVisits(request.getExpireAfterVisits())
+                .accessSecretHash(accessSecretHash)
+                .manageSecretHash(manageSecretHash)
+                .isActivated(manageSecretHash == null)
+                .isForcefullyDowned(false)
+                .build();
     }
 
     @Override
-    public ActivateResult activateURL(ActivateRequestDTO requestDTO) {
-        String token = requestDTO.getToken();
-        String manageSecret = requestDTO.getManageSecret();
+    public @NotNull ActivateResult activateURL(@NotNull ActivateRequest request) {
+        String token = request.getToken();
+        String manageSecret = request.getManageSecret();
 
-        return shortURLRepository.activate(token, manageSecret);
+        ActivateResultType resultType = shortURLRepository.activate(token, manageSecret);
+        return new ActivateResult(resultType);
     }
 
-    private String computeAccessSecretHash(String accessSecret) {
-        if (accessSecret.isEmpty()) {
-            return null;
-        }
-        return passwordEncoder.encode(accessSecret);
-    }
-
-    public String createManageSecret() {
+    @Override
+    public @NotNull String createRandomManageSecret() {
         SecureRandom random = new SecureRandom();
-
         return random.ints(manageSecretLength, 0, MANAGE_SECRET_CHAR_POOL.length())
                 .mapToObj(MANAGE_SECRET_CHAR_POOL::charAt)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
