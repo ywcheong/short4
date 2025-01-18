@@ -56,7 +56,8 @@ public class DefaultPublishService implements PublishService {
         ShortURL publishShortURL = makePublishShortURL(request, token, accessSecretHash, manageSecretHash);
 
         // 생성된 객체 Repository 전달
-        log.info("Publish Service -> ShortURL Repository  :: ShortURL [{}]", publishShortURL);
+        log.info("Publish Service :: publishing :: ShortURL [{}] accessSecretHash? [{}] manageSecretHash? [{}]",
+                publishShortURL, accessSecretHash != null, manageSecretHash != null);
         shortURLRepository.publish(publishShortURL);
 
         // 응답 반환
@@ -103,12 +104,14 @@ public class DefaultPublishService implements PublishService {
         String token = request.getToken();
         String manageSecret = request.getManageSecret();
 
+        log.info("Publish Service :: activating :: token [{}]", token);
         ActivateResultType resultType = shortURLRepository.activate(token, manageSecret);
         return new ActivateResult(resultType);
     }
 
     @Override
     public @NotNull String createRandomManageSecret() {
+        log.info("Publish Service :: creating random manage secret :: n/a");
         SecureRandom random = new SecureRandom();
         return random.ints(manageSecretLength, 0, MANAGE_SECRET_CHAR_POOL.length())
                 .mapToObj(MANAGE_SECRET_CHAR_POOL::charAt)

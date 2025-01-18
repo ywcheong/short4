@@ -1,15 +1,14 @@
 package com.ywcheong.short4.data.dto.publish;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class PublishResponse {
     String token;
+    @ToString.Exclude
     String manageSecret;
 }
