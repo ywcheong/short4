@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @Component
@@ -25,9 +26,12 @@ public class HTTPKindURLValidator implements ConstraintValidator<HTTPKindURL, St
     @Override
     public boolean isValid(String givenURL, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            String protocol = new URL(givenURL).getProtocol().toLowerCase();
+            String protocol = new URI(givenURL).toURL().getProtocol().toLowerCase();
             log.debug("HTTP-kind URL Validator :: protocol given :: protocol [{}] isvalid [{}]", protocol, allowedProtocols.contains(protocol));
             return allowedProtocols.contains(protocol);
+        } catch (URISyntaxException e) {
+            log.debug("HTTP-kind URL Validator :: URISyntaxException :: error [{}]", e.toString());
+            return false;
         } catch (MalformedURLException e) {
             log.debug("HTTP-kind URL Validator :: MalformedURLException :: error [{}]", e.toString());
             return false;
